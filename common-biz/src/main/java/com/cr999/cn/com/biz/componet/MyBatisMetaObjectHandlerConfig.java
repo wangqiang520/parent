@@ -53,6 +53,7 @@ public class MyBatisMetaObjectHandlerConfig implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
+
         String userId;
         try {
             userId = baseContext.getUserId();
@@ -69,5 +70,10 @@ public class MyBatisMetaObjectHandlerConfig implements MetaObjectHandler {
         if (metaObject.hasSetter("updateTime")) {
             this.setFieldValByName("updateTime", new Date(), metaObject);
         }
+
+        if (metaObject.hasSetter("version")) {
+            this.setFieldValByName("version", (int)getFieldValByName("version", metaObject)+1, metaObject);
+        }
+
     }
 }

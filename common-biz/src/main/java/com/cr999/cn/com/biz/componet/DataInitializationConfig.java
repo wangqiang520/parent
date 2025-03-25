@@ -27,7 +27,7 @@ public class DataInitializationConfig {
      * 向zookeeper注册服务
      */
     @PostConstruct
-    public void init(){
+    public void zookeepeInit(){
         String[] beanDefinitionNames = configurableApplicationContext.getBeanDefinitionNames();
         boolean isBeanExists = Arrays.stream(beanDefinitionNames).anyMatch(beanName ->beanName.equals("zooKeeperUtils"));
         if(isBeanExists){
