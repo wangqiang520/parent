@@ -83,7 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public void register(UserVo vo) {
+    public User register(UserVo vo) {
         if(vo==null){
             throw new CustomException(ResultEnum.PARAMETER_EMPTY_ERROR.getMsg(),
                     ResultEnum.PARAMETER_EMPTY_ERROR.getCode());
@@ -98,7 +98,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }else{
             throw new CustomException("身份证号码已存在");
         }
-
+        return user;
 
     }
 
@@ -146,7 +146,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //只能修改
         BeanUtils.copyProperties(vo,user);
         userMapper.updateById(user);
-        throw new CustomException("用户已离职！",ResultEnum.STOP_STATE.getCode());
     }
 
     @Override

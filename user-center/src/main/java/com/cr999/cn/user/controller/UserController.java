@@ -46,8 +46,8 @@ public class UserController {
             return new DataResponse(ResultEnum.PARAMETER_VALID_ERROR.getCode(),
                     ResultEnum.PARAMETER_VALID_ERROR.getMsg().replaceFirst("%s", msg.toString()));
         }
-        userService.register(vo);
-        return new DataResponse(ResultEnum.SUCCESS.getCode(), ResultEnum.SUCCESS.getMsg());
+        User user = userService.register(vo);
+        return new DataResponse(ResultEnum.SUCCESS.getCode(), ResultEnum.SUCCESS.getMsg(),user);
     }
 
     @ApiOperation(value = "登录", notes = "登录", httpMethod = "POST")

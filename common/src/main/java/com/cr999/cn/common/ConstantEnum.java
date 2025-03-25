@@ -3,7 +3,7 @@ package com.cr999.cn.common;
 import lombok.val;
 
 public enum ConstantEnum {
-    EXPIRE_DATE("60","过期日期(单位：秒)"),
+    EXPIRE_DATE("3600","过期日期(单位：秒)"),
     SECRET_KEY ("ZCfasfhuaUUHufguGuwu2020BQWE","token密钥"),
     USER_TOKEN_PREFIX("token","Token前缀"),
     USER_TOKEN_PREFIX_("token_","Token前缀"),

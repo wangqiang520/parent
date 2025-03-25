@@ -5,6 +5,8 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -31,19 +33,12 @@ public class MyBatisMetaObjectHandlerConfig implements MetaObjectHandler {
         }
 
         if (metaObject.hasSetter("createTime")) {
-            this.setFieldValByName("createTime", new Date(), metaObject);
-        }
-
-        if (metaObject.hasSetter("updateUserId")) {
-            this.setFieldValByName("updateUserId", userId, metaObject);
-        }
-
-        if (metaObject.hasSetter("updateTime")) {
-            this.setFieldValByName("updateTime", new Date(), metaObject);
+            Date date = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+            this.setFieldValByName("createTime", date, metaObject);
         }
 
         if (metaObject.hasSetter("version")) {
-            this.setFieldValByName("version", 1, metaObject);
+            this.setFieldValByName("version", 0, metaObject);
         }
 
         if (metaObject.hasSetter("deleted")) {
@@ -68,11 +63,14 @@ public class MyBatisMetaObjectHandlerConfig implements MetaObjectHandler {
         }
 
         if (metaObject.hasSetter("updateTime")) {
-            this.setFieldValByName("updateTime", new Date(), metaObject);
+            Date date = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+            this.setFieldValByName("updateTime", date, metaObject);
         }
 
         if (metaObject.hasSetter("version")) {
-            this.setFieldValByName("version", (int)getFieldValByName("version", metaObject)+1, metaObject);
+            Object o=getFieldValByName("version", metaObject);
+            Integer version=Integer.valueOf(o.toString())+1;
+            this.setFieldValByName("version", version, metaObject);
         }
 
     }

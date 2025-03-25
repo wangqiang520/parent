@@ -28,7 +28,7 @@ public interface UserService extends IService<User> {
      * 用户注册
      * @param vo
      */
-    void register(UserVo vo);
+    User register(UserVo vo);
 
     /**
      * 用户登录

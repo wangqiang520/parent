@@ -1,6 +1,7 @@
 package com.cr999.cn.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -17,32 +18,25 @@ public class BaseEntity {
 
     @TableId("id")
     private String id;
+
     @Version
-    @TableField(
-            fill = FieldFill.INSERT
-    )
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Integer version;
-    @TableField(
-            value = "deleted",
-            fill = FieldFill.INSERT
-    )
+
+    @TableField(fill = FieldFill.INSERT)
     @TableLogic
     private Integer deleted;
-    @TableField(
-            fill = FieldFill.INSERT
-    )
+
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
-    @TableField(
-            fill = FieldFill.INSERT
-    )
+
+    @TableField(fill = FieldFill.INSERT)
     private String createUserId;
-    @TableField(
-            fill = FieldFill.INSERT_UPDATE
-    )
+
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
-    @TableField(
-            fill = FieldFill.INSERT_UPDATE
-    )
+
+    @TableField(fill = FieldFill.UPDATE)
     private String updateUserId;
 
     public BaseEntity() {
