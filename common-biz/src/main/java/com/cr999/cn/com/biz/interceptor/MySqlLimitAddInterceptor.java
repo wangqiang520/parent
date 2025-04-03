@@ -77,14 +77,27 @@ public class MySqlLimitAddInterceptor implements Interceptor {
 		StatementHandler statementHandler=(StatementHandler)invocation.getTarget();
 		BoundSql boundSql = statementHandler.getBoundSql();
 		String originalSql = boundSql.getSql();
-		String sql=originalSql.toLowerCase();
-		String modifiedSql=originalSql;
-		if (sql.startsWith("select") && !sql.contains("limit") && !sql.contains("rownum")) {
+		//String sql=originalSql.toLowerCase();
+		String modifiedSql=originalSql.toLowerCase();;
+		//自动增加条件where deleted=0，
+		if(modifiedSql.startsWith("select") || modifiedSql.startsWith("update")){
+			String whereSuffix=modifiedSql.substring(modifiedSql.lastIndexOf("where"));
+			if(whereSuffix.contains("where")){
+				if(!whereSuffix.contains("deleted=")){
+					modifiedSql=modifiedSql+" and deleted=0";
+				}
+			}else{
+				modifiedSql=modifiedSql+" where deleted=0";
+			}
+		}
+
+
+
+		if (modifiedSql.startsWith("select") && !modifiedSql.contains("limit") && !modifiedSql.contains("rownum")) {
 			SystemParameterService systemParameterService= (SystemParameterService) configurableApplicationContext.getBean("systemParameterServiceImpl");
 			String limit_count = systemParameterService.getParmValue("limit_count", "*");
 			limitCount=Integer.valueOf(limit_count);
-
-			modifiedSql=originalSql+" limit "+ limitCount;
+			modifiedSql=modifiedSql+" limit "+ limitCount;
 
 			Field field = boundSql.getClass().getDeclaredField("sql");
 			field.setAccessible(true);
