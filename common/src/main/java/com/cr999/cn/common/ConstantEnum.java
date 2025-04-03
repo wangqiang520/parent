@@ -8,8 +8,8 @@ public enum ConstantEnum {
     USER_TOKEN_PREFIX("token","Token前缀"),
     USER_TOKEN_PREFIX_("token_","Token前缀"),
     //180秒内，只能发送5条短信
-    SEND_SMS_COUNT_EXPIRE_DATE("180","限制短信发送次数过期时间(单位：秒)"),
-    SEND_SMS_COUNT("5","限制短信发送次数"),
+    //SEND_SMS_COUNT_EXPIRE_DATE("180","限制短信发送次数过期时间(单位：秒)"),
+    //SEND_SMS_COUNT("5","限制短信发送次数"),
     VERIFICATION_CODE_EXPIRE_DATE("60","短信验证码过期时间(单位：秒)"),
     EXCLUDE_PATH_PATTERNS("/v1/user/login,/v1/user/register,/err*,/*.html,/webjars/**,/swagger-resources/*/*,/swagger*","登录拦截，排除路径"),
     SYSTEM_PARAMETER_KEY("system_parameter_all_key","系统参数key"),
