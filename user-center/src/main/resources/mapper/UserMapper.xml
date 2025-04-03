@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cr999.cn.user.biz.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="com.cr999.cn.entity.user.User">
+    <resultMap id="BaseResultMap" type="com.cr999.cn.entity.User">
         <result column="id" jdbcType="VARCHAR" property="id"/>
 
     </resultMap>
+    <select id="abc" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from t_user where id=#{params.column1} and account=#{params.column2}
+    </select>
 </mapper>

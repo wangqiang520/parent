@@ -85,6 +85,10 @@
             <artifactId>curator-recipes</artifactId>
             <version>4.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.cr999.cn</groupId>
+            <artifactId>entity</artifactId>
+        </dependency>
     </dependencies>
 
 

@@ -1,14 +1,12 @@
 package com.cr999.cn.com.biz.componet;
 
-import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cr999.cn.com.biz.exception.CustomException;
 import com.cr999.cn.common.ConstantEnum;
-import com.cr999.cn.common.ResultEnum;
+import com.cr999.cn.common.enums.ResultEnum;
 import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +33,7 @@ public class TokenUtil {
 
     public String createToken(String data){
         if(StringUtils.isBlank(data)){
-            throw new CustomException(ResultEnum.GENERATION_TOKEN_ERROR.getMsg(),ResultEnum.GENERATION_TOKEN_ERROR.getCode());
+            throw new CustomException(ResultEnum.GENERATION_TOKEN_ERROR);
         }
         String token=null;
         try{
@@ -65,10 +63,10 @@ public class TokenUtil {
 
     public boolean checkToken(String token){
         if(StringUtils.isBlank(token)) {
-            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR);
         }
         if(!redisUtil.hasKey(prefix+token)){
-            throw new CustomException(ResultEnum.TOKEN_EXPIRED_ERROR.getMsg(),ResultEnum.TOKEN_EXPIRED_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_EXPIRED_ERROR);
         }
         try {
             Algorithm algorithm = Algorithm.HMAC256(ConstantEnum.SECRET_KEY.getValue());
@@ -78,15 +76,15 @@ public class TokenUtil {
         }catch (Exception e){
             e.printStackTrace();
         }
-        throw new CustomException(ResultEnum.TOKEN_EXPIRED_ERROR.getMsg(),ResultEnum.TOKEN_EXPIRED_ERROR.getCode());
+        throw new CustomException(ResultEnum.TOKEN_EXPIRED_ERROR);
     }
 
     public String refreshToken2(String token,String account){
         if(StringUtils.isBlank(token)) {
-            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR);
         }
         if(!redisUtil.hasKey(prefix+token)){
-            throw new CustomException(ResultEnum.TOKEN_EXPIRED_ERROR.getMsg(),ResultEnum.TOKEN_EXPIRED_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_EXPIRED_ERROR);
         }
         //判断key是否存在
         String data= (String) redisUtil.get(prefix+token);
@@ -94,17 +92,17 @@ public class TokenUtil {
             return createToken(data);
         }
         logger.error(ResultEnum.REFRESH_TOKEN_ERROR.getMsg());
-        throw new CustomException(ResultEnum.REFRESH_TOKEN_ERROR.getMsg(),ResultEnum.REFRESH_TOKEN_ERROR.getCode());
+        throw new CustomException(ResultEnum.REFRESH_TOKEN_ERROR);
 
     }
 
 
     public String getTokenContent(String token) {
         if(StringUtils.isBlank(token)) {
-            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR);
         }
         if(!redisUtil.hasKey(prefix+token)){
-            throw new CustomException(ResultEnum.TOKEN_EXPIRED_ERROR.getMsg(),ResultEnum.TOKEN_EXPIRED_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_EXPIRED_ERROR);
         }
         DecodedJWT jwt=null;
         try {
@@ -113,12 +111,12 @@ public class TokenUtil {
             jwt=verifier.verify(token);
         }catch (Exception e){
             e.printStackTrace();
-            throw new CustomException(ResultEnum.TOKEN_EXPIRED_ERROR.getMsg(),ResultEnum.TOKEN_EXPIRED_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_EXPIRED_ERROR);
         }
 
         String data=jwt.getClaim("data").asString();
         if(StringUtils.isBlank(data)){
-            throw new CustomException(ResultEnum.GET_TOKEN_CONTENT_ERROR.getMsg(),ResultEnum.GET_TOKEN_CONTENT_ERROR.getCode());
+            throw new CustomException(ResultEnum.GET_TOKEN_CONTENT_ERROR);
         }
         return data;
     }

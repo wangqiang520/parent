@@ -8,11 +8,10 @@ import com.cr999.cn.com.biz.componet.RedisUtil;
 import com.cr999.cn.com.biz.componet.TokenUtil;
 import com.cr999.cn.com.biz.exception.CustomException;
 import com.cr999.cn.common.ConstantEnum;
-import com.cr999.cn.common.DataResponse;
-import com.cr999.cn.common.ResultEnum;
-import com.cr999.cn.common.vo.UserBaseVo;
-import com.cr999.cn.common.vo.UserVo;
-import com.cr999.cn.entity.user.User;
+import com.cr999.cn.common.enums.ResultEnum;
+import com.cr999.cn.vo.UserBaseVo;
+import com.cr999.cn.vo.UserVo;
+import com.cr999.cn.entity.User;
 import com.cr999.cn.user.biz.mapper.UserMapper;
 import com.cr999.cn.user.biz.service.TokenService;
 import com.cr999.cn.user.biz.service.UserService;
@@ -21,7 +20,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -85,8 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public User register(UserVo vo) {
         if(vo==null){
-            throw new CustomException(ResultEnum.PARAMETER_EMPTY_ERROR.getMsg(),
-                    ResultEnum.PARAMETER_EMPTY_ERROR.getCode());
+            throw new CustomException(ResultEnum.PARAMETER_EMPTY_ERROR);
         }
         User user=new User();
         BeanUtils.copyProperties(vo,user);
@@ -194,11 +191,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
                         return tokenUtil.createToken(JSONObject.toJSONString(userBaseVo));
                     }
-                    throw new CustomException(ResultEnum.LOGIN_FAILED_VALIDATION_FAILED.getMsg(),
-                            ResultEnum.LOGIN_FAILED_VALIDATION_FAILED.getCode());
+                    throw new CustomException(ResultEnum.LOGIN_FAILED_VALIDATION_FAILED);
                 } else {
-                    throw new CustomException(ResultEnum.LOGIN_FAILED_VALIDATION_EXPIRED.getMsg(),
-                            ResultEnum.LOGIN_FAILED_VALIDATION_EXPIRED.getCode());
+                    throw new CustomException(ResultEnum.LOGIN_FAILED_VALIDATION_EXPIRED);
                 }
             } else {
                 //获取验证码

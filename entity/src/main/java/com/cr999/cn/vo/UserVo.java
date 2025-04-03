@@ -1,7 +1,8 @@
-package com.cr999.cn.entity.user;
+package com.cr999.cn.vo;
 
-import com.cr999.cn.entity.BaseEntity;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
@@ -9,10 +10,10 @@ import java.util.Date;
  *
  * @version 1.0
  * @author wangqiang
- * @date 2021/3/28 17:06 
+ * @date 2021/4/9 16:53 
  */
 @Data
-public class User extends BaseEntity {
+public class UserVo {
 
     /**
      * 用户id
@@ -21,18 +22,22 @@ public class User extends BaseEntity {
     /**
      * 用户昵称
      */
+    @NotBlank(message="用户昵称不能为空！")
     private String nickName;
     /**
      * 用户名（真实姓名）
      */
+    @NotBlank(message="用户名（真实姓名）不能为空！")
     private String userName;
     /**
      * 账号
      */
+    @NotBlank(message="账号不能为空！")
     private String account;
     /**
      * 密码
      */
+    @NotBlank(message="密码不能为空！")
     private String passWord;
     /**
      * 性别(0:男，1女)
@@ -47,12 +52,15 @@ public class User extends BaseEntity {
      */
     private String education;
     /**
-     * 手机号码
+     *
      */
+
+    @NotBlank(message="手机号码不能为空！")
     private String mobile;
     /**
      * 身份证号码
      */
+    @NotBlank(message="身份证号码不能为空！")
     private String identityCard;
     /**
      * 头像
@@ -74,5 +82,13 @@ public class User extends BaseEntity {
      * 登记时间
      */
     private Date entryDate;
+    /**
+     * 短信验证码
+     */
+    private String verificationCode;
+    /**
+     * 是否要较验验证码
+     */
+    private Boolean checkVerificationCode;
 
 }

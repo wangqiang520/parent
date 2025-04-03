@@ -567,4 +567,25 @@ public final class RedisUtil {
 			return 0;
 		}
 	}
+
+	/**
+	 *
+	 *
+	 * @param key   键
+	 * @param value 值
+	 * @param time  时间(秒)
+	 */
+	public boolean setIfAbsent(String key, Object value,long time){
+
+		try {
+			boolean result=redisTemplate.opsForValue().setIfAbsent(key,value);
+			if (time > 0) {
+				expire(key, time);
+			}
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

@@ -1,4 +1,4 @@
-package com.cr999.cn.common;
+package com.cr999.cn.common.enums;
 
 /**
  * 文件描述
@@ -18,7 +18,7 @@ public enum ResultEnum {
     DATA_NOT_EXIST(500105,"数据不存在"),
     PARAMETER_CHECKOUT_ERROR(500106, "参数校验异常：%s 为空"),
     STOP_STATE(500107,"已停用"),
-    DATA_ABNORMAL(500110,"数据异常"),
+    DATA_ABNORMAL(500110,"数据库异常"),
     REDIS_SAVE_ERROR(500111,"redis保存失败"),
     TOKEN_NULL_ERROR(500112,"token不能为空"),
     TOKEN_EXPIRED_ERROR(500113,"token已过期"),

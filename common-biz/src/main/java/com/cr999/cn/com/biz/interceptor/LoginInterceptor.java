@@ -4,8 +4,7 @@ import com.cr999.cn.com.biz.componet.RedisUtil;
 import com.cr999.cn.com.biz.componet.TokenUtil;
 import com.cr999.cn.com.biz.exception.CustomException;
 import com.cr999.cn.common.ConstantEnum;
-import com.cr999.cn.common.ResultEnum;
-import com.cr999.cn.common.vo.UserBaseVo;
+import com.cr999.cn.common.enums.ResultEnum;
 import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;
 import org.apache.commons.lang.StringUtils;
@@ -15,15 +14,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 
 /**
  * @author 王强
- * 登录过滤器
+ * 登录拦截器
  */
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
@@ -57,7 +53,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         }*/
         if(StringUtils.isBlank(token)){
             logger.error("拦截到的路径："+servletPath);
-            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR);
         }
         //如果token不存在，说明已经不能重新刷新token，可能token已经过期，或者是通过退出当前登录用户，删除了token
         boolean isToken = redisUtil.hasKey(ConstantEnum.USER_TOKEN_PREFIX_.getValue() + token);

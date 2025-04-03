@@ -1,4 +1,4 @@
-package com.cr999.cn.common.vo;
+package com.cr999.cn.vo;
 
 import lombok.Data;
 

@@ -3,7 +3,7 @@ package com.cr999.cn.com.biz.exception;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cr999.cn.common.DataResponse;
-import com.cr999.cn.common.ResultEnum;
+import com.cr999.cn.common.enums.ResultEnum;
 import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -48,10 +48,6 @@ public class CustomExceptionHandler {
             }
         }
 
-        /*if (e.getClass() == FeignServiceException.class) {
-            throw e;
-        }*/
-
         if (e instanceof RuntimeException) {
             RuntimeException fe = (RuntimeException) e;
             try {
@@ -85,6 +81,6 @@ public class CustomExceptionHandler {
     public DataResponse handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         e.printStackTrace();
         logger.error("数据库异常", e);
-        return new DataResponse(ResultEnum.DATA_ABNORMAL.getCode(), "数据格式或数据长度不符合规则");
+        return new DataResponse(ResultEnum.DATA_ABNORMAL.getCode(),ResultEnum.DATA_ABNORMAL.getMsg(), e.getMessage());
     }
 }

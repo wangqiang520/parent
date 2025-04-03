@@ -26,7 +26,7 @@ import java.util.List;
  * @date 2021/4/5 0:02 
  */
 @SpringBootApplication(scanBasePackages = "com.cr999.cn")
-@MapperScan(basePackages = {"com.cr999.cn.user.biz.mapper"})
+@MapperScan(basePackages = {"com.cr999.cn.user.biz.mapper","com.cr999.cn.com.biz.mapper"})
 @EnableSwagger2
 public class User_Apper {
     public static void main(String[] args) {

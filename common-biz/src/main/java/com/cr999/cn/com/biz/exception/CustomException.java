@@ -1,5 +1,6 @@
 package com.cr999.cn.com.biz.exception;
 
+import com.cr999.cn.common.enums.ResultEnum;
 import lombok.Data;
 
 /**
@@ -13,10 +14,10 @@ import lombok.Data;
 public class CustomException extends RuntimeException{
 
     private static final long serialVersionUID = 1L;
-    public static final int EXCEPTION_ERROR_CODE = 555;
+    public static final int EXCEPTION_ERROR_CODE = 500;
 
     private String msg;
-    private int code = 555;
+    private int code=EXCEPTION_ERROR_CODE;
 
     public CustomException(String msg) {
         super(msg);
@@ -38,5 +39,10 @@ public class CustomException extends RuntimeException{
         super(msg, e);
         this.msg = msg;
         this.code = code;
+    }
+    public CustomException(ResultEnum resultEnum){
+        super(resultEnum.getMsg());
+        this.code=resultEnum.getCode();
+        this.msg=resultEnum.getMsg();
     }
 }

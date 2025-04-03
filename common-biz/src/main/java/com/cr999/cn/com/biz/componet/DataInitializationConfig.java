@@ -16,7 +16,7 @@ import java.util.Arrays;
  * @Description 项目启动初始化数据
  * @createTime 2023年03月19日 15:23
  */
-@Configuration
+//@Configuration
 @Slf4j
 public class DataInitializationConfig {
 

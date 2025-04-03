@@ -10,7 +10,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cr999.cn.com.biz.componet.RedisUtil;
 import com.cr999.cn.com.biz.exception.CustomException;
 import com.cr999.cn.common.ConstantEnum;
-import com.cr999.cn.common.ResultEnum;
+import com.cr999.cn.common.enums.ResultEnum;
 import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -78,7 +78,7 @@ public class TokenUtil {
      */
     public boolean checkToken(String token){
         if(StringUtils.isBlank(token)) {
-            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR);
         }
         try {
             Algorithm algorithm = Algorithm.HMAC256(ConstantEnum.SECRET_KEY.getValue());
@@ -133,7 +133,7 @@ public class TokenUtil {
 
     public String createToken(String data,long maxTime,String userId){
         if(StringUtils.isNotBlank(data) || StringUtils.isNotBlank(userId)){
-            throw new CustomException(ResultEnum.GENERATION_TOKEN_ERROR.getMsg(),ResultEnum.GENERATION_TOKEN_ERROR.getCode());
+            throw new CustomException(ResultEnum.GENERATION_TOKEN_ERROR);
         }
         String token=null;
         try{
@@ -167,7 +167,7 @@ public class TokenUtil {
 
     public String refreshToken(String token){
         if(StringUtils.isBlank(token)) {
-            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR);
         }
         //判断key是否存在
         if(redisUtil.hasKey(token)){

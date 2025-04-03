@@ -1,17 +1,15 @@
 package com.cr999.cn.user.biz.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cr999.cn.com.biz.annotation.ExtTransactional;
 import com.cr999.cn.com.biz.componet.BaseContext;
-import com.cr999.cn.common.vo.UserVo;
-import com.cr999.cn.entity.user.User;
+import com.cr999.cn.vo.UserVo;
+import com.cr999.cn.entity.User;
 import com.cr999.cn.user.biz.mapper.UserMapper;
 import com.cr999.cn.user.biz.service.TestService;
 import com.cr999.cn.user.biz.service.TokenService;
 import com.cr999.cn.user.biz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 

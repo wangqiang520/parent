@@ -1,9 +1,9 @@
 package com.cr999.cn.user.biz.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cr999.cn.common.vo.UserBaseVo;
-import com.cr999.cn.common.vo.UserVo;
-import com.cr999.cn.entity.user.User;
+import com.cr999.cn.vo.UserBaseVo;
+import com.cr999.cn.vo.UserVo;
+import com.cr999.cn.entity.User;
 
 import java.util.List;
 

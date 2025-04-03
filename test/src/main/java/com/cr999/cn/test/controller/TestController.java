@@ -2,8 +2,8 @@ package com.cr999.cn.test.controller;
 
 import com.cr999.cn.com.biz.exception.CustomException;
 import com.cr999.cn.common.DataResponse;
-import com.cr999.cn.common.ResultEnum;
-import com.cr999.cn.entity.user.User;
+import com.cr999.cn.common.enums.ResultEnum;
+import com.cr999.cn.entity.User;
 import com.cr999.cn.user.biz.service.TestService;
 import com.cr999.cn.user.biz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 文件描述：

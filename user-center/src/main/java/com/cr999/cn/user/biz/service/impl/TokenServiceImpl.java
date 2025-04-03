@@ -2,7 +2,6 @@ package com.cr999.cn.user.biz.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -10,9 +9,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cr999.cn.com.biz.componet.RedisUtil;
 import com.cr999.cn.com.biz.exception.CustomException;
 import com.cr999.cn.common.ConstantEnum;
-import com.cr999.cn.common.ResultEnum;
+import com.cr999.cn.common.enums.ResultEnum;
 import com.cr999.cn.common.utils.EncryptionUtils;
-import com.cr999.cn.entity.user.User;
+import com.cr999.cn.entity.User;
 import com.cr999.cn.user.biz.service.TokenService;
 import com.cr999.cn.user.biz.service.UserService;
 import com.sun.org.slf4j.internal.Logger;
@@ -58,7 +57,7 @@ public class TokenServiceImpl implements TokenService {
     public boolean checkToken(String token) {
         try {
             if(StringUtils.isBlank(token)) {
-                throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+                throw new CustomException(ResultEnum.TOKEN_NULL_ERROR);
             }
             Map<String,Object> map=getTokenContent(token);
             Long expirTime= (Long) map.get("expirTime");
@@ -76,7 +75,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public String refreshToken(String token) {
         if(StringUtils.isBlank(token)) {
-            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg());
         }
         Map<String,Object> map=getTokenContent(token);
         Long expirTime= (Long) map.get("expirTime");
@@ -98,7 +97,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Map<String,Object> getTokenContent(String token){
         if(StringUtils.isBlank(token)) {
-            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg());
         }
         try {
             String s = EncryptionUtils.decodeAes(token, ConstantEnum.SECRET_KEY.getValue());
@@ -113,7 +112,7 @@ public class TokenServiceImpl implements TokenService {
     public String createToken2(User user){
         String data=JSONObject.toJSONString(user);
         if(StringUtils.isBlank(data)){
-            throw new CustomException(ResultEnum.GENERATION_TOKEN_ERROR.getMsg(),ResultEnum.GENERATION_TOKEN_ERROR.getCode());
+            throw new CustomException(ResultEnum.GENERATION_TOKEN_ERROR);
         }
         String token=null;
         try{
@@ -144,7 +143,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public boolean checkToken2(String token){
         if(StringUtils.isBlank(token)) {
-            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg());
         }
         try {
             Algorithm algorithm = Algorithm.HMAC256(ConstantEnum.SECRET_KEY.getValue());
@@ -161,7 +160,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public String refreshToken2(String token,String account){
         if(StringUtils.isBlank(token)) {
-            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg(),ResultEnum.TOKEN_NULL_ERROR.getCode());
+            throw new CustomException(ResultEnum.TOKEN_NULL_ERROR.getMsg());
         }
         //判断key是否存在
         if(redisUtil.hasKey(prefix+token)){

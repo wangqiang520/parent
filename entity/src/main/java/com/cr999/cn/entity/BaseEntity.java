@@ -28,13 +28,13 @@ public class BaseEntity {
     private Integer deleted;
 
     @TableField(fill = FieldFill.INSERT)
-    private Date createTime;
+    private String createTime;
 
     @TableField(fill = FieldFill.INSERT)
     private String createUserId;
 
     @TableField(fill = FieldFill.UPDATE)
-    private Date updateTime;
+    private String updateTime;
 
     @TableField(fill = FieldFill.UPDATE)
     private String updateUserId;

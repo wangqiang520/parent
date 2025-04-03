@@ -1,12 +1,14 @@
 package com.cr999.cn.com.biz.componet;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.cr999.cn.common.ConstantEnum;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -33,8 +35,9 @@ public class MyBatisMetaObjectHandlerConfig implements MetaObjectHandler {
         }
 
         if (metaObject.hasSetter("createTime")) {
-            Date date = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-            this.setFieldValByName("createTime", date, metaObject);
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(ConstantEnum.DATE_TIME_FORMAT.getValue());
+            this.setFieldValByName("createTime", now.format(dateTimeFormatter), metaObject);
         }
 
         if (metaObject.hasSetter("version")) {
@@ -63,8 +66,10 @@ public class MyBatisMetaObjectHandlerConfig implements MetaObjectHandler {
         }
 
         if (metaObject.hasSetter("updateTime")) {
-            Date date = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-            this.setFieldValByName("updateTime", date, metaObject);
+
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(ConstantEnum.DATE_TIME_FORMAT.getValue());
+            this.setFieldValByName("updateTime", now.format(dateTimeFormatter), metaObject);
         }
 
         if (metaObject.hasSetter("version")) {

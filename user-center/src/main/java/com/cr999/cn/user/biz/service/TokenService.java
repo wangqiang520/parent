@@ -1,8 +1,7 @@
 package com.cr999.cn.user.biz.service;
 
-import com.cr999.cn.entity.user.User;
+import com.cr999.cn.entity.User;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**

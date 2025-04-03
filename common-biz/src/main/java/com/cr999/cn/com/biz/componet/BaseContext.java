@@ -3,8 +3,8 @@ package com.cr999.cn.com.biz.componet;
 import com.alibaba.fastjson.JSONObject;
 import com.cr999.cn.com.biz.exception.CustomException;
 import com.cr999.cn.common.ConstantEnum;
-import com.cr999.cn.common.ResultEnum;
-import com.cr999.cn.common.vo.UserBaseVo;
+import com.cr999.cn.common.enums.ResultEnum;
+import com.cr999.cn.vo.UserBaseVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,11 +43,11 @@ public class BaseContext {
         String token = getToken();
         String data = tokenUtil.getTokenContent(token);
         if(StringUtils.isBlank(data)){
-            throw new CustomException(ResultEnum.GET_CURRENT_LOIN_PERSON_ERROR.getMsg(),ResultEnum.GET_CURRENT_LOIN_PERSON_ERROR.getCode());
+            throw new CustomException(ResultEnum.GET_CURRENT_LOIN_PERSON_ERROR);
         }
         UserBaseVo userBaseVo = JSONObject.parseObject(data, UserBaseVo.class);
         if(userBaseVo==null){
-            throw new CustomException(ResultEnum.GET_CURRENT_LOIN_PERSON_ERROR.getMsg(),ResultEnum.GET_CURRENT_LOIN_PERSON_ERROR.getCode());
+            throw new CustomException(ResultEnum.GET_CURRENT_LOIN_PERSON_ERROR);
         }
         return userBaseVo.getId();
     }

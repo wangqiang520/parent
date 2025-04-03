@@ -1,5 +1,6 @@
 package com.cr999.cn.common;
 
+import com.cr999.cn.common.enums.ResultEnum;
 import lombok.Data;
 
 /**
@@ -13,28 +14,22 @@ public class DataResponse<D> extends BaseResponse {
 	public DataResponse() {
 	}
 
-	public DataResponse(int code) {
-		super(code);
-	}
-
-	public DataResponse(int code, D data) {
-		super(code);
-		this.setData(data);
-	}
-
 	public DataResponse(int code, String message) {
 		super(code);
 		this.setMessage(message);
 	}
 
-	public DataResponse(String message, D data) {
-		super(message);
-		this.setData(data);
-	}
-
 	public DataResponse(int code, String message, D data) {
 		super(code, message);
 		this.setData(data);
+	}
+
+	public DataResponse(ResultEnum resultEnum, D data) {
+		super(resultEnum.getCode(),resultEnum.getMsg());
+		this.setData(data);
+	}
+	public DataResponse(ResultEnum resultEnum) {
+		super(resultEnum.getCode(),resultEnum.getMsg());
 	}
 
 
