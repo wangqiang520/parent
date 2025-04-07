@@ -12,6 +12,7 @@ import com.cr999.cn.entity.SystemParameter;
 import com.cr999.cn.vo.SystemParameterVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,16 +50,29 @@ public class SystemParameterServiceImpl extends ServiceImpl<SystemParameterMappe
 
 
 	@Override
-	public String getParmValue(String mainKey, String subKey) {
+	public String getParmValue(String mainKey, String subKey,boolean cacheRead) {
 		if (StringUtils.isBlank(mainKey) || StringUtils.isBlank(subKey)) {
 			throw new CustomException("mainKey和subKey参数，不能为空！");
 		}
-		List<SystemParameter> systemParameters = lstSystemParameter(mainKey, subKey,0);
-		if(CollectionUtils.isEmpty(systemParameters)){
-			throw new CustomException("mainKey和subKey参数，未找到值！");
+		if(cacheRead){
+			List<SystemParameter> systemParameters = lstSystemParameter(mainKey, subKey,0);
+			if(CollectionUtils.isEmpty(systemParameters)){
+				throw new CustomException("mainKey和subKey参数，未找到值！");
+			}else{
+				return systemParameters.get(0).getParmValue();
+			}
 		}else{
-			return systemParameters.get(0).getParmValue();
+			QueryWrapper<SystemParameter> systemParameterQueryWrapper = new QueryWrapper<>();
+			systemParameterQueryWrapper.eq("main_key",mainKey);
+			systemParameterQueryWrapper.eq("sub_key",subKey);
+			SystemParameter systemParameter = systemParameterMapper.selectOne(systemParameterQueryWrapper);
+			if(systemParameter==null){
+				throw new CustomException("mainKey和subKey参数，未找到值！");
+			}else{
+				return systemParameter.getParmValue();
+			}
 		}
+
 	}
 
 	@Override
@@ -135,13 +149,48 @@ public class SystemParameterServiceImpl extends ServiceImpl<SystemParameterMappe
 	}
 
 	@Override
-	public void addUpdateSystemParameter(SystemParameterVo vo) {
+	public SystemParameter addUpdateSystemParameter(SystemParameterVo vo) {
 		if(vo==null){
 			throw new CustomException(ResultEnum.PARAMETER_EMPTY_ERROR);
 		}
-		if(vo.getOperaterInd()==""){
+		QueryWrapper<SystemParameter> systemParameterQueryWrapper = new QueryWrapper<>();
+		systemParameterQueryWrapper.eq("main_key",vo.getMainKey());
+		systemParameterQueryWrapper.eq("sub_key",vo.getSubKey());
+		SystemParameter systemParameter = systemParameterMapper.selectOne(systemParameterQueryWrapper);
+		//添加、修改、删除
+		if(ConstantEnum.ADD.getValue().equals(vo.getOperaterInd())){
+			if(systemParameter!=null){
+				throw new CustomException(ResultEnum.DATA_EXIST);
+			}
+			systemParameter=new SystemParameter();
+			BeanUtils.copyProperties(vo,systemParameter);
+			systemParameterMapper.insert(systemParameter);
 
+		}else if(ConstantEnum.UPDATE.getValue().equals(vo.getOperaterInd())|| ConstantEnum.DELETE.getValue().equals(vo.getOperaterInd())){
+			if(systemParameter==null){
+				throw new CustomException(ResultEnum.DATA_NOT_EXIST);
+			}
+			if(ConstantEnum.UPDATE.getValue().equals(vo.getOperaterInd())){
+				//修改
+				BeanUtils.copyProperties(vo,systemParameter);
+				systemParameterMapper.updateById(systemParameter);
+			}
+			if(ConstantEnum.DELETE.getValue().equals(vo.getOperaterInd())){
+				//删除
+				systemParameter.setDeleted(1);
+				systemParameterMapper.updateById(systemParameter);
+			}
+		}else {
+			throw new CustomException(ResultEnum.VALUE_INPUT_ERROR);
 		}
+
+		//手动删除数据，redis中的数据
+		String systemParameterKey= ConstantEnum.SYSTEM_PARAMETER_KEY.getValue();
+		redisUtil.del(systemParameterKey);
+
+		lstSystemParameter(null, null,0);
+
+		return systemParameter;
 	}
 
 	public List<SystemParameter> filterSystemParameter(String mainKey, String subKey,List<SystemParameter> lstSystemParameter) {

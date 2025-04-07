@@ -82,7 +82,7 @@ public class StartupRunner implements CommandLineRunner {
 
 		systemParameterService.lstSystemParameter(null, null,0);
 		//第一次启动时，limitCount默认值是0，代表sql不添加limit函数,后续再查询sql时，发现limitCount！=0就要添加limit函数，所以在此处赋值-1
-		MySqlLimitAddInterceptor.limitCount=-1;
+		//MySqlLimitAddInterceptor.limitCount=-1;
 		logger.info("初始化系统参数到redis结束");
 	}
 

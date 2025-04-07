@@ -202,10 +202,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 //4、保存短信发送次数
 
                 //限制短信发送次数过期时间
-                String sendSmsCountExpireDate = systemParameterService.getParmValue("SEND_SMS_COUNT_EXPIRE_DATE", "*");
+                String sendSmsCountExpireDate = systemParameterService.getParmValue("SEND_SMS_COUNT_EXPIRE_DATE", "*",true);
                 if (SMSCount != null) {
                     //限制短信发送次数
-                    String sendSmsCount = systemParameterService.getParmValue("SEND_SMS_COUNT", "*");
+                    String sendSmsCount = systemParameterService.getParmValue("SEND_SMS_COUNT", "*",true);
                     if (SMSCount >= Integer.valueOf(sendSmsCount)) {
                         throw new CustomException("登录失败，短信验证次数已用完，" + sendSmsCountExpireDate + "秒内，连续发送短信" + sendSmsCount + "条，请稍后再尝试");
                     }
@@ -218,7 +218,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 }
                 //2、判断手机号码发送的验证码有效期是否已过期，如果已过期，重新生成新的，反之发送旧的验证
                 Integer verificationCode = (Integer) redisUtil.get(verificationCodeKey);
-                String verificationCodeExpireDate = systemParameterService.getParmValue("VERIFICATION_CODE_EXPIRE_DATE", "*");
+                String verificationCodeExpireDate = systemParameterService.getParmValue("VERIFICATION_CODE_EXPIRE_DATE", "*",true);
 
                 if (verificationCode != null) {
                     //更新验证码失效时间

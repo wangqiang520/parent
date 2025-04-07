@@ -40,9 +40,10 @@ public interface SystemParameterService extends IService<SystemParameter> {
 	*         </p>
 	* @param mainKey
 	* @param subKey
+	* @param cacheRead 是否从缓存读取（true=读缓存，false=读数据库）
 	* @return
 	**/
-	String getParmValue(String mainKey,String subKey);
+	String getParmValue(String mainKey,String subKey,boolean cacheRead);
 
 	/**
 	* @Author 19075
@@ -76,6 +77,6 @@ public interface SystemParameterService extends IService<SystemParameter> {
 	* @param vo
 	* @return
 	**/
-	void addUpdateSystemParameter(SystemParameterVo vo);
+	SystemParameter addUpdateSystemParameter(SystemParameterVo vo);
 
 }

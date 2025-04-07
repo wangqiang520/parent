@@ -17,6 +17,9 @@ public enum ConstantEnum {
     SYSTEM_PARAMETER_LOCK_KEY("system_parameter_lock_key","系统参数锁key"),
     DATE_TIME_FORMAT("yyyy-MM-dd HH:mm:ss","时间日期格式"),
     //LIMIT_COUNT("5","限制limit数量"),
+    ADD("add","添加"),
+    UPDATE("update","修改"),
+    DELETE("delete","删除"),
     ;
 
 

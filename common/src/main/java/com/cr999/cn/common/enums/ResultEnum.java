@@ -31,7 +31,7 @@ public enum ResultEnum {
     LOGIN_FAILED_ACCOUNT_NOT_EXIST(500119,"登录失败，用户不存在"),
     GET_CURRENT_LOIN_PERSON_ERROR(500120,"获取当前登录人失败"),
     UNAUTHORIZED_ERROR(401,"无权限访问,资源未授权"),
-
+    VALUE_INPUT_ERROR(500121,"operaterInd值传入错误"),
 
 
 
