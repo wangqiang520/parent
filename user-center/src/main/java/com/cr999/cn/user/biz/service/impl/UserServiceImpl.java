@@ -7,6 +7,7 @@ import com.cr999.cn.com.biz.componet.BaseContext;
 import com.cr999.cn.com.biz.componet.RedisUtil;
 import com.cr999.cn.com.biz.componet.TokenUtil;
 import com.cr999.cn.com.biz.exception.CustomException;
+import com.cr999.cn.com.biz.interceptor.MySqlLimitAddInterceptor;
 import com.cr999.cn.com.biz.service.SystemParameterService;
 import com.cr999.cn.common.ConstantEnum;
 import com.cr999.cn.common.enums.ResultEnum;
@@ -17,6 +18,8 @@ import com.cr999.cn.user.biz.mapper.UserMapper;
 import com.cr999.cn.user.biz.service.TokenService;
 import com.cr999.cn.user.biz.service.UserService;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 文件描述：
@@ -36,11 +40,13 @@ import java.util.List;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Resource
     UserMapper userMapper;
 
     @Value("${sms.verification.switch}")
-    boolean smsVerificationSwitch;
+    boolean smsVerificationSwitch;  //登录短信验证是否开启
 
     @Autowired
     TokenService tokenService;
@@ -163,33 +169,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         BeanUtils.copyProperties(user,userBaseVo);
         String userId = userBaseVo.getId();
         if (smsVerificationSwitch) {
+            if(vo.getCheckVerificationCode()==null){
+                throw new CustomException(ResultEnum.PARAMETER_CHECKOUT_ERROR.getMsg().replace("%s", "checkVerificationCode"),ResultEnum.PARAMETER_CHECKOUT_ERROR.getCode());
+            }
             String mobile = userBaseVo.getMobile();
             if (StringUtils.isBlank(mobile)) {
                 throw new CustomException("手机号码为空，不能发送短信验证码！");
             }
             //短信验证码key
             String verificationCodeKey = "userId:" + userId + ":" + mobile + "verificationCodeKey";
-            //短信发送次数key
-            String sendSmsCountKey = "userId:" + userId + ":" + mobile + "count";
 
-            //获取短信已经发送的次数
-            Integer SMSCount = (Integer) redisUtil.get(sendSmsCountKey);
             //判断本次登录，是属于获取验证码，还是较验验证码
             if (vo.getCheckVerificationCode()) {
                 //较验验证
                 String verificationCode = vo.getVerificationCode();
                 if (StringUtils.isBlank(verificationCode)) {
-                    throw new CustomException(ResultEnum.PARAMETER_CHECKOUT_ERROR.getMsg().replace("%s", "VerificationCode"),
-                            ResultEnum.PARAMETER_CHECKOUT_ERROR.getCode());
+                    throw new CustomException(ResultEnum.PARAMETER_CHECKOUT_ERROR.getMsg().replace("%s", "VerificationCode"),ResultEnum.PARAMETER_CHECKOUT_ERROR.getCode());
                 }
                 //获取保存到redis中的验证码
                 String verificationCodeValue = (String) redisUtil.get(verificationCodeKey);
                 if (StringUtils.isNotBlank(verificationCodeValue)) {
                     if (verificationCodeValue.equals(verificationCode)) {
-                        //登录成功
                         //生成token
-                        //String token = tokenService.createToken(JSONObject.toJSONString(user), ConstantEnum.EXPIRE_DATE.getValue(), user.getId());
-
                         return tokenUtil.createToken(JSONObject.toJSONString(userBaseVo));
                     }
                     throw new CustomException(ResultEnum.LOGIN_FAILED_VALIDATION_FAILED);
@@ -197,44 +198,80 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     throw new CustomException(ResultEnum.LOGIN_FAILED_VALIDATION_EXPIRED);
                 }
             } else {
-                //获取验证码
-                //1、判断手机号码发送验证码的次数，如果达到一定的次数，提示客户N分钟之后再来登录
-                //4、保存短信发送次数
-
-                //限制短信发送次数过期时间
-                String sendSmsCountExpireDate = systemParameterService.getParmValue("SEND_SMS_COUNT_EXPIRE_DATE", "*",true);
-                if (SMSCount != null) {
-                    //限制短信发送次数
-                    String sendSmsCount = systemParameterService.getParmValue("SEND_SMS_COUNT", "*",true);
-                    if (SMSCount >= Integer.valueOf(sendSmsCount)) {
-                        throw new CustomException("登录失败，短信验证次数已用完，" + sendSmsCountExpireDate + "秒内，连续发送短信" + sendSmsCount + "条，请稍后再尝试");
-                    }
-                    //获取剩余的过期时间
-                    long expire = redisUtil.getExpire(sendSmsCountKey);
-                    redisUtil.set(sendSmsCountKey, SMSCount + 1, expire);
-                } else {
-                    //如果为空，说明短时间内没有发送验证
-                    redisUtil.set(sendSmsCountKey, 1, Long.parseLong(sendSmsCountExpireDate));
-                }
-                //2、判断手机号码发送的验证码有效期是否已过期，如果已过期，重新生成新的，反之发送旧的验证
-                Integer verificationCode = (Integer) redisUtil.get(verificationCodeKey);
-                String verificationCodeExpireDate = systemParameterService.getParmValue("VERIFICATION_CODE_EXPIRE_DATE", "*",true);
-
-                if (verificationCode != null) {
-                    //更新验证码失效时间
-                    redisUtil.expire(verificationCodeKey, Long.parseLong(verificationCodeExpireDate));
-                } else {
-                    //重新生成新的验证码，保存到redis中
-                    int randomNumber = (int) ((Math.random() * 9 + 1) * 100000);
-                    redisUtil.set(verificationCodeKey, randomNumber, Long.parseLong(verificationCodeExpireDate));
-                }
-                //3、调用短信平台发送验证码todo
-                return null;
+                //发送短信验证码
+                return sendSMSVerificationCode(vo)+"";
             }
         } else {
-            //String token = tokenService.createToken(JSONObject.toJSONString(user), ConstantEnum.EXPIRE_DATE.getValue(), user.getId());
             return tokenUtil.createToken(JSONObject.toJSONString(userBaseVo));
         }
+    }
+
+    /**
+    * @Author 19075
+    *         <p>
+    *         <li>2025/4/8-11:02</li>
+    *         <li>Function Description</li>
+    *         CN:发送短信验证码
+    *         EN:
+    *         <li>Flow Description</li>
+    *         CN:
+    *         EN:
+    *         </p>
+    * @param vo
+    * @return
+    **/
+    public String sendSMSVerificationCode(UserVo vo){
+
+        String account = vo.getAccount();
+
+        User user = this.getOne(new QueryWrapper<User>().eq("account", account).eq("status","0"));
+        //判断帐号是否存在
+        if (user == null) {
+            throw new CustomException(ResultEnum.ACCOUNT_DOES_NOT_EXIST);
+        }
+        String userId=user.getId();
+        String mobile=user.getMobile();
+        //短信验证码key
+        String verificationCodeKey = "userId:" + userId + ":" + mobile + "verificationCodeKey";
+        //短信发送次数key
+        String sendSmsCountKey = "userId:" + userId + ":" + mobile + "count";
+
+        //限制短信发送次数过期时间
+        String sendSmsCountExpireDate = systemParameterService.getParmValue("SEND_SMS_COUNT_EXPIRE_DATE", "*",true);
+
+        //获取短信已经发送的次数
+        Integer SMSCount = (Integer) redisUtil.get(sendSmsCountKey);
+        //限制短信发送次数过期时间
+        if (SMSCount != null) {
+            //限制短信发送次数
+            String sendSmsCount = systemParameterService.getParmValue("SEND_SMS_COUNT", "*",true);
+            if (SMSCount >= Integer.valueOf(sendSmsCount)) {
+                throw new CustomException("登录失败，短信验证次数已用完，" + sendSmsCountExpireDate + "秒内，已连续发送短信" + sendSmsCount + "条，请稍后再尝试");
+            }
+            //自增1
+            redisUtil.incr(sendSmsCountKey,1);
+
+        } else {
+            redisUtil.set(sendSmsCountKey,0, Long.parseLong(sendSmsCountExpireDate));
+        }
+
+        //2、判断手机号码发送的验证码有效期是否已过期，如果已过期，重新生成新的，反之发送旧的验证
+        String verificationCode = (String) redisUtil.get(verificationCodeKey);
+        //验证码过期时间
+        String verificationCodeExpireDate = systemParameterService.getParmValue("VERIFICATION_CODE_EXPIRE_DATE", "*",true);
+        if (verificationCode != null && SMSCount != null) {
+            //更新验证码失效时间
+            redisUtil.expire(verificationCodeKey, Long.parseLong(verificationCodeExpireDate));
+        } else {
+            //生成6位数的随机验证码
+            Integer randomNum = ThreadLocalRandom.current().nextInt(100000, 999999); // 100000 ~ 999999
+            verificationCode= String.valueOf(randomNum);
+            logger.info("随机生成的验证码：" + randomNum);
+            //保存验证码到redis中
+            redisUtil.set(verificationCodeKey, verificationCode, Long.parseLong(verificationCodeExpireDate));
+        }
+        //调用短信平台发送验证码 todo
+        return verificationCode;
     }
 
 
